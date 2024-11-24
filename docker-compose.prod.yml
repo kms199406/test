@@ -1,0 +1,30 @@
+services:
+  elasticsearch:
+    environment:
+      - xpack.security.enabled=true  # 프로덕션 환경에서 보안 활성화
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.keystore.type=PKCS12
+      - xpack.security.http.ssl.keystore.path=/usr/share/elasticsearch/config/springboot.p12
+      - xpack.security.http.ssl.keystore.password=${KEYSTORE_PASSWORD}
+
+  logstash:
+    environment:
+      ELASTICSEARCH_HOSTS: "https://elasticsearch.projectkkk.com:9200"
+      ELASTICSEARCH_USER: "elastic"
+      ELASTICSEARCH_PASSWORD: "${ELASTIC_PASSWORD}"
+
+  kibana:
+    environment:
+      ELASTICSEARCH_HOSTS: https://elasticsearch.projectkkk.com:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
+      ELASTICSEARCH_SSL_VERIFICATION: certificate
+
+  springboot:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://zigzag-database.cnkq8ww86ffm.ap-northeast-2.rds.amazonaws.com:3306/zigzagDB
+      SPRING_DATASOURCE_USERNAME: Kang
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_ELASTICSEARCH_REST_URIS: https://elasticsearch.projectkkk.com:9200
+      SERVER_SSL_ENABLED: "true"

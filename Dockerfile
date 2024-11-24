@@ -45,10 +45,10 @@ RUN chown 1000:1000 /usr/share/elasticsearch/config/elasticsearch.keystore
 
 # SSL 인증서 복사
 COPY elastic-stack-ca.p12 /app/elastic-stack-ca.p12
-COPY springboot.p12 /app/springboot.p12
+COPY springboot-server.p12 /app/springboot-server.p12
 
 # Expose port 443 for the application
 EXPOSE 443
 
 # Run the Spring Boot application after waiting for Kafka and Elasticsearch to be ready
-ENTRYPOINT ["/app/wait-for-it.sh", "kafka:9092", "--timeout=120", "--", "/app/wait-for-it.sh", "elasticsearch:9200", "--timeout=240", "--", "java", "-Dserver.port=443", "-Dserver.ssl.key-store=/app/springboot.p12", "-Dserver.ssl.key-store-password=changeit", "-Dserver.ssl.key-store-type=PKCS12", "-jar", "app.jar"]
+ENTRYPOINT ["/app/wait-for-it.sh", "kafka:9092", "--timeout=120", "--", "/app/wait-for-it.sh", "elasticsearch:9200", "--timeout=240", "--", "java", "-Dserver.port=443", "-Dserver.ssl.key-store=/app/springboot-server.p12", "-Dserver.ssl.key-store-password=Ccenter123456!", "-Dserver.ssl.key-store-type=PKCS12", "-jar", "app.jar"]
