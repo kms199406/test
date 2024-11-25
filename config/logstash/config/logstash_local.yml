@@ -1,0 +1,15 @@
+# logstash_local.yml configuration for local setup
+
+http.host: "0.0.0.0"
+log.level: info
+
+# Paths for the Logstash pipeline configuration
+path.config: "/usr/share/logstash/pipeline/logstash.conf"
+
+# Settings for log retention and monitoring
+pipeline.workers: 2
+pipeline.batch.size: 125
+pipeline.batch.delay: 50
+
+# 로컬 환경 설정
+xpack.monitoring.enabled: false

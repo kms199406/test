@@ -11,9 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "spring.kafka.topics")
 public class KafkaTopicProperties {
-    private String kafkaLogs = "elk-logstash";
-    private String errorLogs = "elk-logstash";
-/*
-    private String slowApiLogs = "elk-logstash";
-*/
+    private String kafkaLogs = "kafka-logs";
+    private String errorLogs = "error-logs";
 }

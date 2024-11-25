@@ -1,0 +1,21 @@
+# logstash_prod.yml configuration for production setup
+
+http.host: "0.0.0.0"
+log.level: info
+
+# Paths for the Logstash pipeline configuration
+path.config: "/usr/share/logstash/pipeline/logstash.conf"
+
+# Settings for log retention and monitoring
+pipeline.workers: 2
+pipeline.batch.size: 125
+pipeline.batch.delay: 50
+
+# 서버 환경 설정
+xpack.monitoring.enabled: true
+ssl.enabled: true
+
+# SSL 설정 (Let's Encrypt 및 Spring Boot 인증서 사용)
+ssl.certificate_authorities: ["/usr/share/logstash/config/springboot.p12"]
+ssl.keystore.path: "/usr/share/logstash/config/springboot.p12"
+ssl.keystore.password: "Ccenter123456!"

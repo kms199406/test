@@ -13,42 +13,54 @@ import java.time.Duration;
 
 @Configuration
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
-
-    @Value("${spring.elasticsearch.rest.username}") // 변경: rest 네임스페이스 사용
-    private String username;
-
-    @Value("${spring.elasticsearch.rest.password}") // 변경: rest 네임스페이스 사용
-    private String password;
-
-    @Value("${spring.elasticsearch.rest.uris}") // 변경: rest 네임스페이스 사용
+    @Value("${spring.elasticsearch.rest.uris}")
     private String elasticsearchUrl;
 
-    @Value("${spring.elasticsearch.rest.ssl.trust-store}") // 변경: rest 네임스페이스 사용
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
+    @Value("${spring.elasticsearch.rest.username:}")  // prod에서만 사용
+    private String username;
+
+    @Value("${spring.elasticsearch.rest.password:}")  // prod에서만 사용
+    private String password;
+
+    @Value("${spring.elasticsearch.rest.ssl.trust-store:}")  // prod에서만 사용
     private String trustStorePath;
 
-    @Value("${spring.elasticsearch.rest.ssl.trust-store-password}") // 변경: rest 네임스페이스 사용
+    @Value("${spring.elasticsearch.rest.ssl.trust-store-password:}")  // prod에서만 사용
     private String trustStorePassword;
 
-    @Value("${spring.elasticsearch.rest.ssl.key-store}") // 변경: rest 네임스페이스 사용
+    @Value("${spring.elasticsearch.rest.ssl.key-store:}")  // prod에서만 사용
     private String keystorePath;
 
-    @Value("${spring.elasticsearch.rest.ssl.key-store-password}") // 변경: rest 네임스페이스 사용
+    @Value("${spring.elasticsearch.rest.ssl.key-store-password:}")  // prod에서만 사용
     private String keystorePassword;
 
     @Override
     @NonNull
     public ClientConfiguration clientConfiguration() {
+        if ("local".equals(activeProfile)) {
+            return ClientConfiguration.builder()
+                    .connectedTo(elasticsearchUrl.replace("http://", ""))
+                    .withSocketTimeout(Duration.ofSeconds(30))
+                    .withConnectTimeout(Duration.ofSeconds(60))
+                    .build();
+        }
+        return createProdConfiguration();
+    }
+
+    private ClientConfiguration createProdConfiguration() {
         try {
-            // SSL Context 생성 (FileSystemResource 사용)
             SSLContext sslContext = SSLContextBuilder.create()
                     .loadTrustMaterial(
-                            new FileSystemResource(trustStorePath).getFile(), // FileSystemResource 사용
-                            trustStorePassword.toCharArray() // trust-store-password 사용
+                            new FileSystemResource(trustStorePath).getFile(),
+                            trustStorePassword.toCharArray()
                     )
                     .loadKeyMaterial(
-                            new FileSystemResource(keystorePath).getFile(), // FileSystemResource 사용
-                            keystorePassword.toCharArray(), // keystore-password 사용
-                            keystorePassword.toCharArray()  // keystore-password 사용
+                            new FileSystemResource(keystorePath).getFile(),
+                            keystorePassword.toCharArray(),
+                            keystorePassword.toCharArray()
                     )
                     .build();
 
@@ -59,7 +71,6 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
                     .withSocketTimeout(Duration.ofSeconds(30))
                     .withConnectTimeout(Duration.ofSeconds(60))
                     .build();
-
         } catch (Exception e) {
             throw new RuntimeException("Failed to create SSL context for Elasticsearch", e);
         }

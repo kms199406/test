@@ -1,51 +1,36 @@
-# Step 1: Use an official Gradle image to build the project
-FROM gradle:8.5-jdk17 AS builder
-WORKDIR /app
+# Stage 1: Build
+FROM gradle:8.5.0-jdk17 AS build
+WORKDIR /project
 
-# gradle wrapper 파일들을 먼저 복사하고 권한 설정
-COPY gradle gradle/
-COPY gradlew build.gradle settings.gradle ./
-RUN chmod +x gradlew
-# DOS 형식을 UNIX 형식으로 변환 (필요한 경우)
-RUN sed -i 's/\r$//' gradlew
+# Copy build files first to leverage Docker caching for dependencies
+COPY build.gradle settings.gradle gradlew /project/
+COPY gradle /project/gradle
+RUN chmod +x /project/gradlew
 
-# 나머지 소스 파일들 복사
-COPY src ./src
+# Cache dependencies to optimize build times
+RUN /project/gradlew dependencies --no-daemon || return 0
 
-# Gradle 파일 복사
-COPY gradle/gradle-8.5-bin.zip /app/gradle/gradle-8.5-bin.zip
+# Copy source files
+COPY src /project/src
 
-# Firebase 설정 파일 복사
-COPY src/main/resources/superb-analog-439512-g8-firebase-adminsdk-l7nbt-2305deb251.json /app/serviceAccountKey.json
+# Run the build
+ARG BUILD_ENV=local
+RUN if [ "$BUILD_ENV" = "local" ] ; then /project/gradlew clean build -x test --no-daemon; else /project/gradlew clean build --no-daemon; fi
 
-# gradle-wrapper.properties 수정
-RUN sed -i 's|https://services.gradle.org/distributions/gradle-8.5-bin.zip|file:///app/gradle/gradle-8.5-bin.zip|' gradle/wrapper/gradle-wrapper.properties
+# Stage 2: Run
+FROM openjdk:17
+WORKDIR /project
 
-# Gradle 빌드
-RUN ./gradlew build -x test --no-daemon
+# Set environment variables for JVM options and application properties
+ARG BUILD_ENV=local
+ENV SPRING_PROFILES_ACTIVE=$BUILD_ENV
+ENV JAVA_OPTS="-Xms512m -Xmx2048m"
 
-# Step 2: Runtime stage
-FROM openjdk:17-jdk-slim
-WORKDIR /app
+# Copy the built jar from the previous stage
+COPY --from=build /project/build/libs/*.jar /project/*.jar
 
-# Copy application files
-COPY --from=builder /app/build/libs/*.jar app.jar
-COPY --from=builder /app/serviceAccountKey.json /app/serviceAccountKey.json
+# Health check for production environment
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD if [ "$SPRING_PROFILES_ACTIVE" = "prod" ]; then curl --fail http://localhost:433/actuator/health || exit 1; fi
 
-# Copy and set permissions for wait-for-it script
-COPY scripts/wait-for-it.sh /app/wait-for-it.sh
-RUN chmod +x /app/wait-for-it.sh
-
-# Copy SSL certificates and set permissions
-COPY localhost.p12 elastic-stack-ca.p12 springboot-server.p12 /app/
-RUN chmod 600 /app/*.p12
-
-EXPOSE 443
-
-ENTRYPOINT ["/app/wait-for-it.sh", "kafka:9092", "--timeout=120", "--", \
-            "/app/wait-for-it.sh", "elasticsearch:9200", "--timeout=240", "--", \
-            "java", "-Dserver.port=443", \
-            "-Dserver.ssl.key-store=/app/springboot-server.p12", \
-            "-Dserver.ssl.key-store-password=Ccenter123456!", \
-            "-Dserver.ssl.key-store-type=PKCS12", \
-            "-jar", "app.jar"]
+# Run the application with JVM options
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /project/*.jar"]

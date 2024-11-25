@@ -1,0 +1,122 @@
+spring:
+  datasource:
+    url: jdbc:mysql://mysql:3306/zigzag_test
+    username: root
+    password: "0000"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        highlight_sql: true
+        generate_statistics: true
+        use_sql_comments: true
+        default_batch_fetch_size: 1000
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+    defer-datasource-initialization: true
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+  elasticsearch:
+    rest:
+      uris: http://elasticsearch-local:9200
+      username: elastic
+      password: elastic
+      connection-timeout: 60s
+      read-timeout: 60s
+      ssl:
+        enabled: false
+    index-settings:
+      index:
+        analysis:
+          analyzer:
+            korean:
+              type: nori
+              tokenizer: nori_tokenizer
+
+  kafka:
+    bootstrap-servers: kafka:29092
+    consumer:
+      group-id: elk-logstash
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    topics:
+      kafka-logs: kafka-logs
+      error-logs: error-logs
+    consumer.groups:
+      kafka: log-group
+      error: error-group
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sksdmltkek14@gmail.com
+    password: ixcv bizi nhbl zzcc
+    properties:
+      mail.smtp:
+        auth: true
+        starttls.enable: true
+
+  main:
+    allow-bean-definition-overriding: true
+
+  web:
+    resources:
+      add-mappings: false
+
+server:
+  port: 8080
+  ssl:
+    enabled: false
+  forward-headers-strategy: native
+
+logging:
+  level:
+    root: DEBUG
+    com.project: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate:
+      SQL: DEBUG
+      orm.jdbc.bind: DEBUG
+      type.descriptor.sql: DEBUG
+      stat: DEBUG
+      SQL_SLOW: DEBUG
+      cache: DEBUG
+    org.springframework.batch: DEBUG
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      multiline: true
+      logging: slf4j
+
+jwt:
+  secret: 0k7kzHlg8LLJYy4hGibQKsUc0qWpVG3cJvYpgqC44DM8r3qg4jaDQxlOs/dYEIUvdLULZ+aAEWghfrm4ZUityg==
+  token-validity-in-seconds: 86400
+  expiration: 3600
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    disable-swagger-default-url: true
+    urls:
+      - name: Default API
+        url: /v3/api-docs
+  api-docs:
+    enabled: true
+    path: /v3/api-docs

@@ -1,0 +1,10 @@
+cluster.name: es-cluster-local
+node.name: es-local
+
+# Network Settings
+network.host: 0.0.0.0
+http.port: 9200
+
+# For development: Disable security features
+xpack.security.enabled: false
+discovery.type: single-node
