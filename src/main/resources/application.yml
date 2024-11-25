@@ -8,9 +8,9 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:mysql://zigzag-database.cnkq8ww86ffm.ap-northeast-2.rds.amazonaws.com:3306/zigzagDB
-    username: Kang
-    password: ${DB_PASSWORD} # 데이터베이스 비밀번호 환경 변수
+    url: jdbc:mysql://dev-database:3306/zigzagDB
+    username: root
+    password: 0000
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -22,7 +22,7 @@ spring:
         format_sql: true # 포맷팅된 SQL 출력
   elasticsearch:
     rest:
-      uris: https://elasticsearch.projectkkk.com:9200
+      uris: http://elasticsearch:9200
       username: elastic
       password: ${ELASTIC_PASSWORD} # Elasticsearch 비밀번호 환경 변수
       connection-timeout: 60s
@@ -44,52 +44,6 @@ spring:
   logging:
     level:
       root: DEBUG # 로컬 개발 로그 디버그 수준
-
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-  datasource:
-    url: jdbc:mysql://dev-database:3306/zigzagDB
-    username: devuser
-    password: devpassword
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        show_sql: false
-        format_sql: true
-  elasticsearch:
-    rest:
-      uris: https://elasticsearch.dev:9200
-      username: elastic
-      password: devpassword
-      connection-timeout: 60s
-      socket-timeout: 30s
-      ssl:
-        enabled: true
-        trust-store-type: PKCS12
-        trust-store: /app/elastic-stack-ca.p12
-        trust-store-password: devpassword
-        key-store: /app/springboot.p12
-        key-store-password: devpassword
-        key-store-type: PKCS12
-  kafka:
-    bootstrap-servers: kafka:9092
-  server:
-    port: 443
-    ssl:
-      enabled: true
-      key-store: /app/springboot.p12
-      key-store-password: devpassword
-      key-store-type: PKCS12
-  logging:
-    level:
-      root: DEBUG
 
 ---
 spring:

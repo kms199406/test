@@ -19,8 +19,8 @@ services:
   springboot:
     environment:
       SPRING_PROFILES_ACTIVE: local
-      SPRING_DATASOURCE_URL: jdbc:mysql://zigzag-database.cnkq8ww86ffm.ap-northeast-2.rds.amazonaws.com:3306/zigzagDB
-      SPRING_DATASOURCE_USERNAME: Kang
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/zigzagDB
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 0000
       SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
       SERVER_SSL_ENABLED: "false"
