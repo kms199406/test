@@ -16,12 +16,8 @@ COPY src /project/src
 # Build argument for environment selection
 ARG BUILD_ENV=local
 
-# Run the build based on environment
-RUN if [ "$BUILD_ENV" = "local" ] ; then \
-        /project/gradlew clean build -x test --no-daemon; \
-    else \
-        /project/gradlew clean build --no-daemon; \
-    fi
+# Run the build without tests for both environments
+RUN /project/gradlew clean build -x test --no-daemon
 
 # Stage 2: Run
 FROM openjdk:17
