@@ -75,7 +75,6 @@ services:
       dockerfile: Dockerfile
       args:
         BUILD_ENV: prod
-      container_name: spring-app-prod
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:mysql://zigzag-database.cnkq8ww86ffm.ap-northeast-2.rds.amazonaws.com:3306/zigzagDB
