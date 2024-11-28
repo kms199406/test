@@ -15,6 +15,6 @@ elasticsearch.ssl.certificateAuthorities: ["/usr/share/kibana/config/certs/kiban
 elasticsearch.ssl.verificationMode: "certificate"
 
 xpack.security.enabled: true
-xpack.encryptedSavedObjects.encryptionKey: "${KIBANA_ENCRYPTION_KEY}"
+xpack.encryptedSavedObjects.encryptionKey: "z3j42kT0Vw48Fj7ZGNdYZmAxfjR8iAn2P1cH3N0LVJU="
 
 i18n.locale: "ko"
