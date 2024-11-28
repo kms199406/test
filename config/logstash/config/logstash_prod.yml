@@ -18,6 +18,6 @@ xpack.monitoring.elasticsearch.password: "elastic"
 
 # SSL 설정 (Let's Encrypt 및 Spring Boot 인증서 사용)
 ssl.enabled: true
-ssl.certificate_authorities: ["/usr/share/logstash/config/springboot.p12"]
-ssl.keystore.path: "/usr/share/logstash/config/springboot.p12"
+ssl.certificate_authorities: ["/usr/share/logstash/config/logstash.p12"]
+ssl.keystore.path: "/usr/share/logstash/config/logstash.p12"
 ssl.keystore.password: "Ccenter123456!"
