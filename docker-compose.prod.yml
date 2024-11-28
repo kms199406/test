@@ -107,6 +107,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        BUILD_ENV: prod
     image: spring-app:prod
     environment:
       - SPRING_PROFILES_ACTIVE=prod
