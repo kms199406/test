@@ -9,7 +9,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: local
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/zigzag_test
-      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_USERNAME: zigzag
       SPRING_DATASOURCE_PASSWORD: 0000
       SPRING_ELASTICSEARCH_URIS: http://elasticsearch-local:9200
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
@@ -17,51 +17,36 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
-      - kafka
-      - elasticsearch
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     networks:
       - app-network
 
   mysql:
     image: mysql:8.0
-    container_name: mysql-local
     environment:
-      MYSQL_ROOT_PASSWORD: 0000
+      MYSQL_ROOT_PASSWORD: root123        # IDE 접속용
       MYSQL_DATABASE: zigzag_test
+      MYSQL_USER: zigzag
+      MYSQL_PASSWORD: 0000
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --bind-address=0.0.0.0
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - app-network
-
-  kafka:
-    image: confluentinc/cp-kafka:7.3.0
-    container_name: kafka
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_CREATE_TOPICS: "kafka-logs:1:1,error-logs:1:1"
-    ports:
-      - "29092:29092"
-    networks:
-      - app-network
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.0
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-    networks:
-      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p0000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
@@ -75,6 +60,80 @@ services:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.9
+    container_name: logstash-local
+    volumes:
+      - ./config/logstash/pipeline/logstash-local.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./config/logstash/config/logstash_local.yml:/usr/share/logstash/config/logstash.yml
+      - ./certs/local/localhost.p12:/usr/share/logstash/config/localhost.p12
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9600/_node/stats | grep -q '\"status\":\"green\"'"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "kafka-logs:1:1,error-logs:1:1"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS: 60000
+      KAFKA_ZOOKEEPER_SESSION_TIMEOUT_MS: 60000
+    ports:
+      - "29092:29092"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:29092 --list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_MAX_CLIENT_CNXNS: 60
+      ZOOKEEPER_MIN_SESSION_TIMEOUT: 4000
+      ZOOKEEPER_MAX_SESSION_TIMEOUT: 40000
+    ports:
+      - "2181:2181"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'ruok' | nc localhost 2181 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   app-network:

@@ -13,42 +13,24 @@ RUN /project/gradlew dependencies --no-daemon || return 0
 # Copy source files
 COPY src /project/src
 
-# Build argument for environment selection
+# Run the build
 ARG BUILD_ENV=local
-
-# Run the build without tests for both environments
-RUN /project/gradlew clean build -x test --no-daemon
+RUN if [ "$BUILD_ENV" = "local" ] ; then /project/gradlew clean build -x test --no-daemon; else /project/gradlew clean build --no-daemon; fi
 
 # Stage 2: Run
 FROM openjdk:17
 WORKDIR /project
 
-# Environment variables for different environments
+# Set environment variables for JVM options and application properties
 ARG BUILD_ENV=local
 ENV SPRING_PROFILES_ACTIVE=$BUILD_ENV
-
-# Set different JVM options based on environment
-ENV JAVA_OPTS_LOCAL="-Xms256m -Xmx1024m"
-ENV JAVA_OPTS_PROD="-Xms512m -Xmx2048m"
-
-# Create directory for certificates in production
-RUN mkdir -p /app/certs
+ENV JAVA_OPTS="-Xms512m -Xmx2048m"
 
 # Copy the built jar from the previous stage
-COPY --from=build /project/build/libs/*.jar /project/app.jar
+COPY --from=build /project/build/libs/*.jar /project/*.jar
 
-# Health check configuration
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD if [ "$SPRING_PROFILES_ACTIVE" = "prod" ]; then \
-            curl --fail https://localhost:8080/actuator/health || exit 1; \
-        else \
-            curl --fail http://localhost:8080/actuator/health || exit 1; \
-        fi
+# Health check for production environment
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD if [ "$SPRING_PROFILES_ACTIVE" = "prod" ]; then curl --fail http://localhost:433/actuator/health || exit 1; fi
 
-# Run the application with environment-specific settings
-ENTRYPOINT ["sh", "-c", "\
-    if [ \"$SPRING_PROFILES_ACTIVE\" = \"local\" ]; then \
-        java $JAVA_OPTS_LOCAL -jar /project/app.jar; \
-    else \
-        java $JAVA_OPTS_PROD -jar /project/app.jar; \
-    fi"]
+# Run the application with JVM options
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /project/*.jar"]

@@ -1,6 +1,20 @@
-# Local Kibana configuration (local.yml)
-server.name: kibana
+server.name: kibana-prod
 server.host: "0.0.0.0"
 server.port: 5601
-elasticsearch.hosts: ["https://elasticsearch-prod:9200"]
-server.ssl.enabled: false
+
+elasticsearch.hosts: ["https://elasticsearch.projectkkk.com:9200"]
+elasticsearch.username: "${ELASTIC_USERNAME}"
+elasticsearch.password: "${ELASTIC_PASSWORD}"
+
+server.ssl.enabled: true
+server.ssl.certificate: "/usr/share/kibana/config/certs/kibana.p12"
+server.ssl.key: "/usr/share/kibana/config/certs/kibana.p12"
+server.ssl.keyPassphrase: "${SSL_PASSWORD}"
+
+elasticsearch.ssl.certificateAuthorities: ["/usr/share/kibana/config/certs/kibana.p12"]
+elasticsearch.ssl.verificationMode: "certificate"
+
+xpack.security.enabled: true
+xpack.encryptedSavedObjects.encryptionKey: "${KIBANA_ENCRYPTION_KEY}"
+
+i18n.locale: "ko"

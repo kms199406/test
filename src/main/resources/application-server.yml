@@ -25,16 +25,16 @@ spring:
   elasticsearch:
     uris: https://elasticsearch.projectkkk.com:9200
     username: elastic
-    password: Ccenter123456!
+    password: elastic
     connection-timeout: 10000
     read-timeout: 60000
     ssl:
-      keystore-path: /app/elasticsearch_keystore.p12
+      keystore-path: /app/springboot.p12
       keystore-password: Ccenter123456!
       keystore-type: PKCS12
       key-password: Ccenter123456!
       verification-mode: full
-      trust-store: /app/elasticsearch_truststore.p12
+      trust-store: /app/elasticsearch.p12
       trust-store-password: Ccenter123456!
       trust-store-type: PKCS12
     index-settings:
@@ -54,16 +54,14 @@ spring:
   kafka:
     bootstrap-servers: kafka:9092
     consumer:
-      group-id: elk-logstash
+      group-id: logs-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     topics:
       kafka-logs: kafka-logs
       error-logs: error-logs
-    consumer.groups:
-      kafka: log-group
-      error: error-group
+
 
   logging:
     level:
@@ -84,7 +82,6 @@ spring:
       key-store: /app/springboot.p12
       key-store-password: Ccenter123456!
       key-store-type: PKCS12
-      key-alias: projectkkk2
     hsts:
       enabled: true
       include-sub-domains: true
