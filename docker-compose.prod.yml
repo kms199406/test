@@ -28,12 +28,8 @@ services:
       - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/elasticsearch.p12
       - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/elasticsearch.p12
       - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.keystore.path=/usr/share/elasticsearch/config/elasticsearch.p12
-      - xpack.security.http.ssl.truststore.path=/usr/share/elasticsearch/config/elasticsearch.p12
     volumes:
-      - ./config/elasticsearch/elasticsearch_prod.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ./certs/prod/elasticsearch.p12:/usr/share/elasticsearch/config/elasticsearch.p12
-      - ./certs/prod/elasticsearch.keystore:/usr/share/elasticsearch/config/elasticsearch.keystore
       - elasticsearch_prod_data:/usr/share/elasticsearch/data
     ulimits:
       memlock:
@@ -47,11 +43,9 @@ services:
     container_name: kibana-prod
     environment:
       - ELASTICSEARCH_HOSTS=https://elasticsearch.projectkkk.com:9200
-      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/kibana.p12
       - I18N_LOCALE=ko
     volumes:
-      - ./config/kibana/kibana_prod.yml:/usr/share/kibana/config/kibana.yml
-      - ./certs/prod/kibana.p12:/usr/share/kibana/config/certs/kibana.p12
+      - ./certs/prod/elasticsearch.p12:/usr/share/kibana/config/kibana.p12
     depends_on:
       - elasticsearch
     networks:
@@ -62,7 +56,7 @@ services:
     container_name: logstash-prod
     volumes:
       - ./config/logstash/pipeline/logstash-prod.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./certs/prod/logstash.p12:/usr/share/logstash/config/logstash.p12
+      - ./certs/prod/elasticsearch.p12:/usr/share/logstash/config/logstash.p12
     environment:
       - "LS_JAVA_OPTS=-Xms2g -Xmx2g"
     depends_on:
@@ -122,7 +116,6 @@ services:
       - SERVER_SSL_ENABLED=true
       - SERVER_SSL_KEY_STORE=/app/certs/springboot.p12
       - SERVER_SSL_KEY_STORE_PASSWORD=Ccenter123456!
-      - SPRING_CONFIG_LOCATION=/app/config/application-server.yml
     volumes:
       - ./certs/prod/springboot.p12:/app/certs/springboot.p12
     ports:
