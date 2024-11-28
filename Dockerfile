@@ -1,6 +1,8 @@
 # Stage 1: Build
 FROM gradle:8.5.0-jdk17 AS build
 WORKDIR /project
+RUN mkdir -p /project/certs/prod && chmod -R 755 /project/certs
+
 
 # Copy build files first to leverage Docker caching for dependencies
 COPY build.gradle settings.gradle gradlew /project/
@@ -20,6 +22,7 @@ RUN if [ "$BUILD_ENV" = "local" ] ; then /project/gradlew clean build -x test --
 # Stage 2: Run
 FROM openjdk:17
 WORKDIR /project
+RUN mkdir -p /project/certs/prod && chmod -R 755 /project/certs
 
 # Set environment variables for JVM options and application properties
 ARG BUILD_ENV=local
