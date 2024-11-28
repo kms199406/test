@@ -33,6 +33,7 @@ services:
     volumes:
       - ./config/elasticsearch/elasticsearch_prod.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ./certs/prod/elasticsearch.p12:/usr/share/elasticsearch/config/elasticsearch.p12
+      - ./certs/prod/elasticsearch.keystore:/usr/share/elasticsearch/config/elasticsearch.keystore
       - elasticsearch_prod_data:/usr/share/elasticsearch/data
     ulimits:
       memlock:
