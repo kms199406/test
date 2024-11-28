@@ -30,7 +30,7 @@ services:
       - xpack.security.http.ssl.enabled=true
     volumes:
       - ./certs/prod/elasticsearch.keystore:/usr/share/elasticsearch/config/elasticsearch.keystore
-      - ./certs/prod/elasticsearch.p12:/usr/share/elasticsearch/config/elasticsearch.p12
+      - ./certs/prod/springboot.p12:/usr/share/elasticsearch/config/elasticsearch.p12
       - elasticsearch_prod_data:/usr/share/elasticsearch/data
     ulimits:
       memlock:
