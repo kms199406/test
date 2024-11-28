@@ -36,12 +36,12 @@ spring:
     connection-timeout: 10000
     read-timeout: 60000
     ssl:
-      keystore-path: /etc/certs/elasticsearch.p12
+      keystore-path: /project/certs/prod/elasticsearch.p12
       keystore-password: Ccenter123456!
       keystore-type: PKCS12
       key-password: Ccenter123456!
       verification-mode: full
-      trust-store: /etc/certs/elasticsearch.p12
+      trust-store: /project/certs/prod/elasticsearch.p12
       trust-store-password: Ccenter123456!
       trust-store-type: PKCS12
     index-settings:
@@ -91,7 +91,7 @@ web:
 server:
     port: 443
     ssl:
-      key-store: /etc/certs/springboot.p12
+      key-store: /project/certs/prod/springboot.p12
       key-store-password: Ccenter123456!
       key-store-type: PKCS12
     hsts:

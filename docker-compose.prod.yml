@@ -115,10 +115,10 @@ services:
       - SPRING_DATASOURCE_PASSWORD=alstj121!
       - SPRING_ELASTICSEARCH_URIS=https://elasticsearch.projectkkk.com:9200
       - SERVER_SSL_ENABLED=true
-      - SERVER_SSL_KEY_STORE=/app/certs/springboot.p12
+      - SERVER_SSL_KEY_STORE=/project/certs/prod/springboot.p12
       - SERVER_SSL_KEY_STORE_PASSWORD=Ccenter123456!
     volumes:
-      - ./certs/prod/springboot.p12:/app/certs/springboot.p12
+      - ./certs/prod/springboot.p12:/project/certs/prod/springboot.p12
     ports:
       - "443:443"
     depends_on:
