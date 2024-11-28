@@ -22,6 +22,13 @@ spring:
         order_inserts: true
         order_updates: true
 
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+
   elasticsearch:
     uris: https://elasticsearch.projectkkk.com:9200
     username: elastic
@@ -29,12 +36,12 @@ spring:
     connection-timeout: 10000
     read-timeout: 60000
     ssl:
-      keystore-path: /app/springboot.p12
+      keystore-path: /etc/certs/elasticsearch.p12
       keystore-password: Ccenter123456!
       keystore-type: PKCS12
       key-password: Ccenter123456!
       verification-mode: full
-      trust-store: /app/elasticsearch.p12
+      trust-store: /etc/certs/elasticsearch.p12
       trust-store-password: Ccenter123456!
       trust-store-type: PKCS12
     index-settings:
@@ -52,19 +59,48 @@ spring:
         enabled: true
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: kafka:29092
     consumer:
-      group-id: logs-group
+      group-id: elk-logstash
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     topics:
       kafka-logs: kafka-logs
       error-logs: error-logs
+    consumer.groups:
+      kafka: log-group
+      error: error-group
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sksdmltkek14@gmail.com
+    password: ixcv bizi nhbl zzcc
+    properties:
+      mail.smtp:
+        auth: true
+        starttls.enable: true
 
-  logging:
-    level:
+  main:
+    allow-bean-definition-overriding: true
+
+web:
+    resources:
+      add-mappings: false
+server:
+    port: 443
+    ssl:
+      key-store: /etc/certs/springboot.p12
+      key-store-password: Ccenter123456!
+      key-store-type: PKCS12
+    hsts:
+      enabled: true
+      include-sub-domains: true
+      max-age: 31536000
+
+logging:
+  level:
       root: INFO
       com.project: INFO
       org.springframework.web: INFO
@@ -76,25 +112,29 @@ spring:
       org.hibernate.cache: WARN
       org.springframework.batch: DEBUG
 
-  server:
-    port: 443
-    ssl:
-      key-store: /app/springboot.p12
-      key-store-password: Ccenter123456!
-      key-store-type: PKCS12
-    hsts:
-      enabled: true
-      include-sub-domains: true
-      max-age: 31536000
+decorator:
+  datasource:
+     p6spy:
+        enable-logging: true
+        multiline: true
+        logging: slf4j
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: sksdmltkek14@gmail.com
-    password: ixcv bizi nhbl zzcc
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+jwt:
+  secret: 0k7kzHlg8LLJYy4hGibQKsUc0qWpVG3cJvYpgqC44DM8r3qg4jaDQxlOs/dYEIUvdLULZ+aAEWghfrm4ZUityg==
+  token-validity-in-seconds: 86400
+  expiration: 3600
+
+springdoc:
+    swagger-ui:
+      enabled: true
+      path: /swagger-ui.html
+      config-url: /v3/api-docs/swagger-config
+      disable-swagger-default-url: true
+      urls:
+        - name: Default API
+          url: /v3/api-docs
+    api-docs:
+      enabled: true
+      path: /v3/api-docs
+
+
