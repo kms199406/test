@@ -3,13 +3,13 @@ server.host: "0.0.0.0"
 server.port: 5601
 
 elasticsearch.hosts: ["https://elasticsearch.projectkkk.com:9200"]
-elasticsearch.username: "${ELASTIC_USERNAME}"
-elasticsearch.password: "${ELASTIC_PASSWORD}"
+elasticsearch.username: "elastic"
+elasticsearch.password: "elastic"
 
 server.ssl.enabled: true
 server.ssl.certificate: "/usr/share/kibana/config/certs/kibana.p12"
 server.ssl.key: "/usr/share/kibana/config/certs/kibana.p12"
-server.ssl.keyPassphrase: "${SSL_PASSWORD}"
+server.ssl.keyPassphrase: "Ccenter123456!"
 
 elasticsearch.ssl.certificateAuthorities: ["/usr/share/kibana/config/certs/kibana.p12"]
 elasticsearch.ssl.verificationMode: "certificate"

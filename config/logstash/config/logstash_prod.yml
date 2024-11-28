@@ -13,8 +13,8 @@ pipeline.batch.delay: 50
 
 xpack.monitoring.enabled: true
 xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch.projectkkk.com:9200"]
-xpack.monitoring.elasticsearch.username: "${ELASTIC_USERNAME}"
-xpack.monitoring.elasticsearch.password: "${ELASTIC_PASSWORD}"
+xpack.monitoring.elasticsearch.username: "elastic"
+xpack.monitoring.elasticsearch.password: "elastic"
 
 # SSL 설정 (Let's Encrypt 및 Spring Boot 인증서 사용)
 ssl.enabled: true
