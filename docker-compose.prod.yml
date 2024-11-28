@@ -25,10 +25,9 @@ services:
       - xpack.security.enabled=true
       - xpack.security.transport.ssl.enabled=true
       - xpack.security.transport.ssl.verification_mode=certificate
-      - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/elasticsearch.p12
-      - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/elasticsearch.p12
       - xpack.security.http.ssl.enabled=true
     volumes:
+      - ./certs/elasticsearch.keystore:/usr/share/elasticsearch/config/elasticsearch.keystore
       - ./certs/prod/elasticsearch.p12:/usr/share/elasticsearch/config/elasticsearch.p12
       - elasticsearch_prod_data:/usr/share/elasticsearch/data
     ulimits:
