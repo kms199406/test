@@ -51,7 +51,7 @@ services:
       - I18N_LOCALE=ko
     volumes:
       - ./config/kibana/kibana_prod.yml:/usr/share/kibana/config/kibana.yml
-      - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
+      - ./certs/prod/kibana.p12:/usr/share/kibana/config/certs/kibana.p12
     depends_on:
       - elasticsearch
     networks:
