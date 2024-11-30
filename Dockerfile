@@ -3,7 +3,6 @@ FROM gradle:8.5.0-jdk17 AS build
 WORKDIR /project
 RUN mkdir -p /project/certs/prod && chmod -R 755 /project/certs
 
-
 # Copy build files first to leverage Docker caching for dependencies
 COPY build.gradle settings.gradle gradlew /project/
 COPY gradle /project/gradle
@@ -17,7 +16,7 @@ COPY src /project/src
 
 # Run the build
 ARG BUILD_ENV=local
-RUN if [ "$BUILD_ENV" = "local" ] ; then /project/gradlew clean build -x test --no-daemon; else /project/gradlew clean build --no-daemon; fi
+RUN /project/gradlew clean build -x test --no-daemon
 
 # Stage 2: Run
 FROM openjdk:17
