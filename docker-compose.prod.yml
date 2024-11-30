@@ -1,5 +1,7 @@
 services:
   nginx:
+    env_file:
+      - .env.prod
     image: nginx:latest
     container_name: nginx-prod
     ports:
@@ -14,6 +16,8 @@ services:
       - app-network
 
   elasticsearch:
+    env_file:
+      - .env.prod
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
     container_name: elasticsearch-prod
     environment:
@@ -22,15 +26,22 @@ services:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+      # 보안 설정
       - xpack.security.enabled=true
       - xpack.security.transport.ssl.enabled=true
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/elasticsearch.p12
       - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/elasticsearch.p12
+      - xpack.security.transport.ssl.keystore.password=${ELASTIC_KEYSTORE_PASSWORD}
+      - xpack.security.transport.ssl.truststore.password=${ELASTIC_KEYSTORE_PASSWORD}
       - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.keystore.path=/usr/share/elasticsearch/config/elasticsearch.p12
+      - xpack.security.http.ssl.truststore.path=/usr/share/elasticsearch/config/elasticsearch.p12
+      - xpack.security.http.ssl.keystore.password=${ELASTIC_KEYSTORE_PASSWORD}
+      - xpack.security.http.ssl.truststore.password=${ELASTIC_KEYSTORE_PASSWORD}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     volumes:
-      - ./certs/prod/elasticsearch.keystore:/usr/share/elasticsearch/config/elasticsearch.keystore
-      - ./certs/prod/springboot.p12:/usr/share/elasticsearch/config/elasticsearch.p12
+      - ./certs/prod/elasticsearch.p12:/usr/share/elasticsearch/config/elasticsearch.p12
       - elasticsearch_prod_data:/usr/share/elasticsearch/data
     ulimits:
       memlock:
@@ -40,24 +51,28 @@ services:
       - app-network
 
   kibana:
+    env_file:
+      - .env.prod
     image: docker.elastic.co/kibana/kibana:7.17.9
     container_name: kibana-prod
     environment:
       - ELASTICSEARCH_HOSTS=https://elasticsearch.projectkkk.com:9200
       - I18N_LOCALE=ko
     volumes:
-      - ./certs/prod/elasticsearch.p12:/usr/share/kibana/config/kibana.p12
+      - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
     depends_on:
       - elasticsearch
     networks:
       - app-network
 
   logstash:
+    env_file:
+      - .env.prod
     image: docker.elastic.co/logstash/logstash:7.17.9
     container_name: logstash-prod
     volumes:
       - ./config/logstash/pipeline/logstash-prod.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./certs/prod/elasticsearch.p12:/usr/share/logstash/config/logstash.p12
+      - ./certs/prod/logstash.p12:/usr/share/logstash/config/logstash.p12
     environment:
       - "LS_JAVA_OPTS=-Xms2g -Xmx2g"
     depends_on:
@@ -66,6 +81,8 @@ services:
       - app-network
 
   zookeeper:
+    env_file:
+      - .env.prod
     image: confluentinc/cp-zookeeper:7.3.0
     container_name: zookeeper-prod
     environment:
@@ -84,6 +101,8 @@ services:
       retries: 5
 
   kafka1:
+    env_file:
+      - .env.prod
     image: confluentinc/cp-kafka:7.3.0
     container_name: kafka-prod1
     depends_on:
@@ -104,6 +123,8 @@ services:
       - app-network
 
   spring-app:
+    env_file:
+      - .env.prod
     build:
       context: .
       dockerfile: Dockerfile
