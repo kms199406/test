@@ -23,10 +23,22 @@ FROM openjdk:17
 WORKDIR /project
 RUN mkdir -p /project/certs/prod && chmod -R 755 /project/certs
 
+# Copy SSL certificates
+COPY certs/prod /project/certs/prod
+
+# Set permissions for SSL certificates
+RUN chmod -R 600 /project/certs/prod/*.p12 && \
+    chmod -R 600 /project/certs/prod/*.crt && \
+    chmod -R 600 /project/certs/prod/*.pem && \
+    chown -R 1000:1000 /project/certs/prod
+
 # Set environment variables for JVM options and application properties
 ARG BUILD_ENV=local
 ENV SPRING_PROFILES_ACTIVE=$BUILD_ENV
-ENV JAVA_OPTS="-Xms512m -Xmx2048m"
+ENV JAVA_OPTS="-Xms512m -Xmx2048m \
+  -Djavax.net.ssl.keyStore=/project/certs/prod/springboot.p12 \
+  -Djavax.net.ssl.keyStorePassword=Ccenter123456! \
+  -Djavax.net.ssl.keyStoreType=PKCS12"
 
 # Copy the built jar from the previous stage
 COPY --from=build /project/build/libs/*.jar /project/*.jar
