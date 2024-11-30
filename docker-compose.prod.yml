@@ -1,7 +1,7 @@
 services:
   nginx:
     env_file:
-      - .env.prod
+      - .env
     image: nginx:latest
     container_name: nginx-prod
     ports:
@@ -17,7 +17,7 @@ services:
 
   elasticsearch:
     env_file:
-      - .env.prod
+      - .env
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
     container_name: elasticsearch-prod
     environment:
@@ -52,7 +52,7 @@ services:
 
   kibana:
     env_file:
-      - .env.prod
+      - .env
     image: docker.elastic.co/kibana/kibana:7.17.9
     container_name: kibana-prod
     environment:
@@ -67,7 +67,7 @@ services:
 
   logstash:
     env_file:
-      - .env.prod
+      - .env
     image: docker.elastic.co/logstash/logstash:7.17.9
     container_name: logstash-prod
     volumes:
@@ -82,7 +82,7 @@ services:
 
   zookeeper:
     env_file:
-      - .env.prod
+      - .env
     image: confluentinc/cp-zookeeper:7.3.0
     container_name: zookeeper-prod
     environment:
@@ -102,7 +102,7 @@ services:
 
   kafka1:
     env_file:
-      - .env.prod
+      - .env
     image: confluentinc/cp-kafka:7.3.0
     container_name: kafka-prod1
     depends_on:
@@ -124,7 +124,7 @@ services:
 
   spring-app:
     env_file:
-      - .env.prod
+      - .env
     build:
       context: .
       dockerfile: Dockerfile
