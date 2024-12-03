@@ -2,6 +2,7 @@
 FROM gradle:8.5.0-jdk17 AS build
 WORKDIR /project
 RUN mkdir -p /project/certs/prod && chmod -R 755 /project/certs
+RUN mkdir -p /project/scripts && chmod -R 755 /project/scripts
 
 # Copy build files first to leverage Docker caching for dependencies
 COPY build.gradle settings.gradle gradlew /project/
