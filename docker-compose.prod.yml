@@ -30,7 +30,7 @@ services:
   kibana:
     env_file:
       - .env
-    image: docker.elastic.co/kibana/kibana:7.17.9
+    image: docker.elastic.co/kibana/kibana:8.10.4
     container_name: kibana-prod
     environment:
       - ELASTICSEARCH_HOSTS=https://elasticsearch.www.projectkkk.com:9200
@@ -47,7 +47,7 @@ services:
   logstash:
     env_file:
       - .env
-    image: docker.elastic.co/logstash/logstash:7.17.9
+    image: docker.elastic.co/logstash/logstash:8.10.4
     container_name: logstash-prod
     volumes:
       - ./config/logstash/config/logstash_prod.yml:/usr/share/logstash/config/logstash.yml
