@@ -42,8 +42,11 @@ ENV JAVA_OPTS="-Xms512m -Xmx2048m \
 # Copy the built jar from the previous stage
 COPY --from=build /project/build/libs/*.jar /project/*.jar
 
+COPY scripts/set_kibana_password.sh /project/scripts
+RUN chmod +x /project/scripts/set_kibana_password.sh
+
 # Health check for production environment
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD if [ "$SPRING_PROFILES_ACTIVE" = "prod" ]; then curl --fail http://localhost:443/actuator/health || exit 1; fi
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD if [ "$SPRING_PROFILES_ACTIVE" = "prod" ]; then curl --fail https://www.projectkkk.com:443/actuator/health || exit 1; fi
 
 # Run the application with JVM options
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /project/*.jar"]
+ENTRYPOINT ["sh", "-c", "/project/scripts/set_kibana_password.sh && java $JAVA_OPTS -jar /project/*.jar"]
