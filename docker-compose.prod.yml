@@ -36,6 +36,7 @@ services:
       - ELASTICSEARCH_HOSTS=https://elasticsearch.www.projectkkk.com:9200
       - I18N_LOCALE=ko
     volumes:
+      - ./config/kibana/kibana_prod.yml:/usr/share/kibana/config/kibana.yml
       - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
       - ./certs/prod/kibana.pem:/usr/share/kibana/config/kibana.pem
     depends_on:
@@ -133,6 +134,3 @@ networks:
   app-network:
     driver: bridge
 
-volumes:
-  elasticsearch_prod_data:
-  kafka_prod_data1:
