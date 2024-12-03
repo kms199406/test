@@ -7,11 +7,10 @@ elasticsearch.username: "elastic"
 elasticsearch.password: "elastic"
 
 server.ssl.enabled: true
-server.ssl.certificate: "/usr/share/kibana/config/kibana.p12"
-server.ssl.key: "/usr/share/kibana/config/kibana.p12"
-server.ssl.keyPassphrase: "Ccenter123456!"
+server.ssl.certificate: "/usr/share/kibana/config/kibana.pem"
+server.ssl.key: "/usr/share/kibana/config/kibana.pem"
 
-elasticsearch.ssl.certificateAuthorities: ["/usr/share/kibana/config/kibana.p12"]
+elasticsearch.ssl.certificateAuthorities: ["/usr/share/kibana/config/kibana.pem"]
 elasticsearch.ssl.verificationMode: "certificate"
 
 xpack.security.enabled: true

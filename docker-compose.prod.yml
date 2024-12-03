@@ -60,6 +60,7 @@ services:
       - I18N_LOCALE=ko
     volumes:
       - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
+      - ./certs/prod/kibana.pem:/usr/share/kibana/config/kibana.pem
     depends_on:
       - elasticsearch
     networks:
@@ -132,6 +133,7 @@ services:
         BUILD_ENV: prod
     image: spring-app:prod
     environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka1:29092
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:mysql://zigzag-database.cnkq8ww86ffm.ap-northeast-2.rds.amazonaws.com:3306/zigzagDB
       - SPRING_DATASOURCE_USERNAME=Kang
