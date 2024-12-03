@@ -12,7 +12,7 @@ services:
       SPRING_DATASOURCE_USERNAME: zigzag
       SPRING_DATASOURCE_PASSWORD: 0000
       SPRING_ELASTICSEARCH_URIS: http://elasticsearch-local:9200
-      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SERVER_SSL_ENABLED: false
     ports:
       - "8080:8080"
@@ -97,7 +97,7 @@ services:
         condition: service_healthy
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_CREATE_TOPICS: "kafka-logs:1:1,error-logs:1:1"

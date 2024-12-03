@@ -46,7 +46,7 @@ spring:
               tokenizer: nori_tokenizer
 
   kafka:
-    bootstrap-servers: kafka:29092
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: elk-logstash
       auto-offset-reset: earliest
