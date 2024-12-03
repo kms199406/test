@@ -16,7 +16,6 @@ xpack.monitoring.elasticsearch.username: "elastic"
 xpack.monitoring.elasticsearch.password: "elastic"
 
 # HTTP SSL 설정
-http.ssl.enabled: true
 http.ssl.keystore.path: "/usr/share/logstash/config/logstash.p12"
 http.ssl.keystore.password: "Ccenter123456!"
 

@@ -2,9 +2,9 @@ server.name: kibana-prod
 server.host: "0.0.0.0"
 server.port: 5601
 
-elasticsearch.hosts: ["https://elasticsearch.www.projectkkk.com:9200"]
-elasticsearch.username: "elastic"
-elasticsearch.password: "elastic"
+elasticsearch.hosts: ["https://elasticsearch.www.projectkkk.com:9200"]  # 도메인 유지
+elasticsearch.username: "kibana_system"  # 시스템 계정으로 변경
+elasticsearch.password: "${KIBANA_PASSWORD}"  # 환경변수 사용
 
 server.ssl.enabled: true
 server.ssl.keystore.path: "/usr/share/kibana/config/kibana.p12"

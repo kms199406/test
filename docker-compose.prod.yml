@@ -33,9 +33,14 @@ services:
     image: docker.elastic.co/kibana/kibana:8.10.4
     container_name: kibana-prod
     environment:
-      - ELASTICSEARCH_HOSTS=https://elasticsearch.www.projectkkk.com:9200
+      - ELASTICSEARCH_HOSTS=https://elasticsearch.www.projectkkk.com:9200  # 내부 도커 네트워크 사용
+      - ELASTICSEARCH_USERNAME=kibana_system           # elastic 대신 kibana_system 사용
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}      # 환경변수로 관리
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/kibana.pem
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=certificate
       - I18N_LOCALE=ko
     volumes:
+      - scripts/set_kibana_password.sh:/project/scripts/set_kibana_password.sh
       - ./config/kibana/kibana_prod.yml:/usr/share/kibana/config/kibana.yml
       - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
       - ./certs/prod/kibana.pem:/usr/share/kibana/config/kibana.pem
@@ -54,6 +59,7 @@ services:
       - ./config/logstash/pipeline/logstash-prod.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./certs/prod/logstash.p12:/usr/share/logstash/config/logstash.p12
     environment:
+     - XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATE_AUTHORITY=/usr/share/logstash/config/logstash.pem
       - "LS_JAVA_OPTS=-Xms2g -Xmx2g"
     depends_on:
       - elasticsearch

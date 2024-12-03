@@ -1,26 +1,17 @@
 #!/bin/bash
 
-# 설정할 비밀번호
-NEW_PASSWORD="elastic"
+# Elasticsearch 내부 도커 네트워크 주소 사용
+ELASTICSEARCH_URL="https://elasticsearch:9200"
 
-# Elasticsearch URL
-ELASTICSEARCH_URL="https://elasticsearch.www.projectkkk.com:9200"
+# 서비스 계정 생성 및 토큰 발급
+curl -X POST "${ELASTICSEARCH_URL}/_security/service/elastic/kibana/credential/token/create" \
+  -H "Content-Type: application/json" \
+  -u "elastic:${ELASTIC_PASSWORD}" \
+  --cacert /usr/share/kibana/config/kibana.pem
 
-# Elasticsearch 관리자 계정
-ELASTIC_USERNAME="elastic"
-
-# Elasticsearch 관리자 비밀번호
-ELASTIC_PASSWORD="elastic"
-
-# Kibana 시스템 계정 비밀번호 설정 요청
+# 또는 kibana_system 사용자 비밀번호 설정
 curl -X POST "${ELASTICSEARCH_URL}/_security/user/kibana_system/_password" \
   -H "Content-Type: application/json" \
-  -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" \
-  -d "{\"password\": \"${NEW_PASSWORD}\"}"
-
-# 실행 결과 확인
-if [ $? -eq 0 ]; then
-  echo "Kibana 시스템 계정 비밀번호가 성공적으로 설정되었습니다."
-else
-  echo "Kibana 시스템 계정 비밀번호 설정에 실패했습니다."
-fi
+  -u "elastic:${ELASTIC_PASSWORD}" \
+  -d "{\"password\":\"${KIBANA_PASSWORD}\"}" \
+  --cacert /usr/share/kibana/config/kibana.pem
