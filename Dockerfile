@@ -57,8 +57,8 @@ ENV JAVA_OPTS="-Xms512m -Xmx2048m \
 # Copy the built jar from the previous stage
 COPY --from=build /project/build/libs/*.jar /project/*.jar
 
-COPY scripts/set_kibana_password.sh /project/scripts
-RUN chmod +x /project/scripts/set_kibana_password.sh
+COPY scripts/create_service_token.sh /project/scripts
+RUN chmod +x /project/scripts/create_service_token.sh
 
 # Health check for production environment
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD if [ "$SPRING_PROFILES_ACTIVE" = "prod" ]; then curl --fail https://www.projectkkk.com:443/actuator/health || exit 1; fi
