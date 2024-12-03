@@ -40,7 +40,7 @@ services:
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=certificate
       - I18N_LOCALE=ko
     volumes:
-      - scripts/set_kibana_password.sh:/project/scripts/set_kibana_password.sh
+      - ./scripts/set_kibana_password.sh:/project/scripts/set_kibana_password.sh
       - ./config/kibana/kibana_prod.yml:/usr/share/kibana/config/kibana.yml
       - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
       - ./certs/prod/kibana.pem:/usr/share/kibana/config/kibana.pem
