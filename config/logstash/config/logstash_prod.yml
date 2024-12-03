@@ -12,7 +12,7 @@ pipeline.batch.size: 125
 pipeline.batch.delay: 50
 
 xpack.monitoring.enabled: true
-xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch.projectkkk.com:9200"]
+xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch.www.projectkkk.com:9200"]
 xpack.monitoring.elasticsearch.username: "elastic"
 xpack.monitoring.elasticsearch.password: "elastic"
 

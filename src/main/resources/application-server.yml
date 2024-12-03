@@ -30,7 +30,7 @@ spring:
 
 
   elasticsearch:
-    uris: https://elasticsearch.projectkkk.com:9200
+    uris: https://elasticsearch.www.projectkkk.com:9200
     username: elastic
     password: elastic
     connection-timeout: 10000

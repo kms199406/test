@@ -27,7 +27,7 @@ RUN mkdir -p /project/certs/prod && chmod -R 755 /project/certs
 COPY certs/prod /project/certs/prod
 
 # Set permissions for SSL certificates
-RUN chmod -R 600 /project/certs/prod/*.p12 && \
+RUN chmod -R 600 /project/certs/prod/*.pkcs12 && \
     chmod -R 600 /project/certs/prod/*.crt && \
     chmod -R 600 /project/certs/prod/*.pem && \
     chown -R 1000:1000 /project/certs/prod
@@ -44,7 +44,7 @@ ENV JAVA_OPTS="-Xms512m -Xmx2048m \
 COPY --from=build /project/build/libs/*.jar /project/*.jar
 
 # Health check for production environment
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD if [ "$SPRING_PROFILES_ACTIVE" = "prod" ]; then curl --fail http://localhost:433/actuator/health || exit 1; fi
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD if [ "$SPRING_PROFILES_ACTIVE" = "prod" ]; then curl --fail http://localhost:443/actuator/health || exit 1; fi
 
 # Run the application with JVM options
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /project/*.jar"]

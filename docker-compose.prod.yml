@@ -49,7 +49,7 @@ services:
     image: docker.elastic.co/kibana/kibana:7.17.9
     container_name: kibana-prod
     environment:
-      - ELASTICSEARCH_HOSTS=https://elasticsearch.projectkkk.com:9200
+      - ELASTICSEARCH_HOSTS=https://elasticsearch.www.projectkkk.com:9200
       - I18N_LOCALE=ko
     volumes:
       - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
