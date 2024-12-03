@@ -28,7 +28,6 @@ COPY certs/prod /project/certs/prod
 
 # Set permissions for SSL certificates
 RUN chmod -R 600 /project/certs/prod/*.p12 && \
-    chmod -R 600 /project/certs/prod/*.crt && \
     chmod -R 600 /project/certs/prod/*.pem && \
     chown -R 1000:1000 /project/certs/prod
 
