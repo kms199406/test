@@ -26,7 +26,7 @@
         <!-- Kafka Appender for Application Logs -->
         <Kafka name="ApplicationKafkaAppender" topic="kafka-logs">
             <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Property name="bootstrap.servers">kafka:29092</Property>
+            <Property name="bootstrap.servers">kafka:9092</Property>
             <Property name="compression.type">snappy</Property>
             <Property name="batch.size">32768</Property>
             <Property name="linger.ms">2000</Property>
@@ -40,7 +40,7 @@
         <!-- Kafka Appender for Error Logs -->
         <Kafka name="ErrorKafkaAppender" topic="error-logs">
             <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Property name="bootstrap.servers">kafka:29092</Property>
+            <Property name="bootstrap.servers">kafka:9092</Property>
             <Property name="compression.type">snappy</Property>
             <Property name="batch.size">32768</Property>
             <Property name="linger.ms">2000</Property>
