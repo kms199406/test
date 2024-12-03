@@ -11,6 +11,7 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
       - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=false
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.keystore.path=/usr/share/elasticsearch/config/elasticsearch.p12
       - xpack.security.http.ssl.keystore.password=${ELASTIC_KEYSTORE_PASSWORD}
@@ -26,6 +27,11 @@ services:
         hard: -1
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "https://elasticsearch.www.projectkkk.com:9200", "-u", "elastic:${ELASTIC_PASSWORD}", "--insecure" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   kibana:
     env_file:
@@ -33,19 +39,20 @@ services:
     image: docker.elastic.co/kibana/kibana:8.10.4
     container_name: kibana-prod
     environment:
-      - ELASTICSEARCH_HOSTS=https://elasticsearch.www.projectkkk.com:9200  # 내부 도커 네트워크 사용
-      - ELASTICSEARCH_USERNAME=kibana_system           # elastic 대신 kibana_system 사용
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}      # 환경변수로 관리
+      - ELASTICSEARCH_HOSTS=https://elasticsearch.www.projectkkk.com:9200
+      # username, password 설정 제거하고 토큰 설정 추가
+      - ELASTICSEARCH_SERVICEACCOUNTTOKEN=${ELASTICSEARCH_SERVICE_TOKEN}
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/kibana.pem
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=certificate
       - I18N_LOCALE=ko
     volumes:
-      - ./scripts/set_kibana_password.sh:/project/scripts/set_kibana_password.sh
+      - ./scripts/create_service_token.sh:/docker-entrypoint-initdb.d/create_service_token.sh
       - ./config/kibana/kibana_prod.yml:/usr/share/kibana/config/kibana.yml
       - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
       - ./certs/prod/kibana.pem:/usr/share/kibana/config/kibana.pem
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -55,8 +62,8 @@ services:
     image: docker.elastic.co/logstash/logstash:8.10.4
     container_name: logstash-prod
     volumes:
-      - ./config/logstash/config/logstash_prod.yml:/usr/share/logstash/config/logstash.yml
-      - ./config/logstash/pipeline/logstash-prod.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./config/logstash/config/logstash_prod.yml:/usr/share/logstash/config/logstash.yml:rw
+      - ./config/logstash/pipeline/logstash-prod.conf:/usr/share/logstash/pipeline/logstash.conf:rw
       - ./certs/prod/logstash.p12:/usr/share/logstash/config/logstash.p12
     environment:
      - XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATE_AUTHORITY=/usr/share/logstash/config/logstash.pem
@@ -133,7 +140,7 @@ services:
     ports:
       - "443:443"
     depends_on:
-      - elasticsearch
+      condition: service_healthy
     networks:
       - app-network
 
