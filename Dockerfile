@@ -12,12 +12,13 @@ RUN chmod +x /project/gradlew
 COPY config/logstash/config/logstash_prod.yml /usr/share/logstash/config/logstash.yml
 COPY config/logstash/pipeline/logstash-prod.conf /usr/share/logstash/pipeline/logstash.conf
 
+RUN chown -R 1000:1000 /usr/share/logstash/pipeline
+RUN chown -R 1000:1000 /usr/share/logstash/config
 RUN chmod 644 /usr/share/logstash/config/logstash.yml
 RUN chmod 644 /usr/share/logstash/pipeline/logstash.conf
 RUN chown 1000:1000 /usr/share/logstash/config/logstash.yml
 RUN chown 1000:1000 /usr/share/logstash/pipeline/logstash.conf
-RUN chown -R 1000:1000 /usr/share/logstash/pipeline
-RUN chown -R 1000:1000 /usr/share/logstash/config
+
 
 
 # Cache dependencies to optimize build times
