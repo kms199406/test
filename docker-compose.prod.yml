@@ -50,7 +50,7 @@ services:
     image: docker.elastic.co/logstash/logstash:7.17.9
     container_name: logstash-prod
     volumes:
-      - ./config/logstash/config/logstash-prod.yml:/usr/share/logstash/config/logstash.yml
+      - ./config/logstash/config/logstash_prod.yml:/usr/share/logstash/config/logstash.yml
       - ./config/logstash/pipeline/logstash-prod.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./certs/prod/logstash.p12:/usr/share/logstash/config/logstash.p12
     environment:
