@@ -11,7 +11,7 @@ server.ssl.keystore.path: "/usr/share/kibana/config/kibana.p12"
 server.ssl.keystore.password: "Ccenter123456!"
 
 elasticsearch.ssl.verificationMode: "certificate"
-elasticsearch.ssl.keystore.path: "/usr/share/kibana/config/kibana.12"
+elasticsearch.ssl.keystore.path: "/usr/share/kibana/config/kibana.p12"
 elasticsearch.ssl.keystore.password: "Ccenter123456!"
 
 xpack.security.enabled: true
