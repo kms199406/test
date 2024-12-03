@@ -23,6 +23,8 @@ RUN /project/gradlew clean build -x test --no-daemon
 FROM openjdk:17
 WORKDIR /project
 RUN mkdir -p /project/certs/prod && chmod -R 755 /project/certs
+RUN mkdir -p /project/scripts && chmod -R 755 /project/scripts
+
 
 # Copy SSL certificates
 COPY certs/prod /project/certs/prod
@@ -43,7 +45,7 @@ ENV JAVA_OPTS="-Xms512m -Xmx2048m \
 # Copy the built jar from the previous stage
 COPY --from=build /project/build/libs/*.jar /project/*.jar
 
-COPY /project/scripts/set_kibana_password.sh /project/scripts
+COPY scripts/set_kibana_password.sh /project/scripts
 RUN chmod +x /project/scripts/set_kibana_password.sh
 
 # Health check for production environment
