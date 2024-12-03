@@ -15,7 +15,7 @@ RUN /project/gradlew dependencies --no-daemon || return 0
 COPY src /project/src
 
 # Run the build
-ARG BUILD_ENV=local
+ARG BUILD_ENV=prod
 RUN /project/gradlew clean build -x test --no-daemon
 
 # Stage 2: Run
@@ -32,7 +32,7 @@ RUN chmod -R 600 /project/certs/prod/*.p12 && \
     chown -R 1000:1000 /project/certs/prod
 
 # Set environment variables for JVM options and application properties
-ARG BUILD_ENV=local
+ARG BUILD_ENV=prod
 ENV SPRING_PROFILES_ACTIVE=$BUILD_ENV
 ENV JAVA_OPTS="-Xms512m -Xmx2048m \
   -Djavax.net.ssl.keyStore=/project/certs/prod/springboot.p12 \

@@ -67,7 +67,7 @@ services:
       retries: 3
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.17.9
+    image: docker.elastic.co/logstash/logstash:8.10.4
     container_name: logstash-local
     volumes:
       - ./config/logstash/pipeline/logstash-local.conf:/usr/share/logstash/pipeline/logstash.conf
@@ -90,7 +90,7 @@ services:
       retries: 3
 
   kafka:
-    image: confluentinc/cp-kafka:7.3.0
+    image: confluentinc/cp-kafka:8.10.4
     container_name: kafka
     depends_on:
       zookeeper:
