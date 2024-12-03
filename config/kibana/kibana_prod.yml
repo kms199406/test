@@ -2,10 +2,11 @@ server.name: kibana-prod
 server.host: "0.0.0.0"
 server.port: 5601
 
-elasticsearch.hosts: ["https://elasticsearch.www.projectkkk.com:9200"]  # 도메인 유지
-elasticsearch.username: "kibana_system"  # 시스템 계정으로 변경
-elasticsearch.password: "${KIBANA_PASSWORD}"  # 환경변수 사용
+# Elasticsearch 연결 설정
+elasticsearch.hosts: ["https://elasticsearch.www.projectkkk.com:9200"]
+elasticsearch.serviceAccountToken: "${ELASTICSEARCH_SERVICE_TOKEN}"  # username/password 대신 토큰 사용
 
+# SSL 설정
 server.ssl.enabled: true
 server.ssl.keystore.path: "/usr/share/kibana/config/kibana.p12"
 server.ssl.keystore.password: "Ccenter123456!"
@@ -14,6 +15,7 @@ elasticsearch.ssl.verificationMode: "certificate"
 elasticsearch.ssl.keystore.path: "/usr/share/kibana/config/kibana.p12"
 elasticsearch.ssl.keystore.password: "Ccenter123456!"
 
+# 보안 설정
 xpack.security.enabled: true
 xpack.encryptedSavedObjects.encryptionKey: "z3j42kT0Vw48Fj7ZGNdYZmAxfjR8iAn2P1cH3N0LVJU="
 
