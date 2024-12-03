@@ -9,6 +9,12 @@ COPY build.gradle settings.gradle gradlew /project/
 COPY gradle /project/gradle
 RUN chmod +x /project/gradlew
 
+COPY config/logstash/config/logstash_prod.yml /usr/share/logstash/config/logstash.yml
+COPY config/logstash/pipeline/logstash-prod.conf /usr/share/logstash/pipeline/logstash.conf
+
+RUN chmod 644 /usr/share/logstash/config/logstash.yml
+RUN chmod 644 /usr/share/logstash/pipeline/logstash.conf
+
 # Cache dependencies to optimize build times
 RUN /project/gradlew dependencies --no-daemon || return 0
 
