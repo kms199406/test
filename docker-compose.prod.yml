@@ -33,26 +33,40 @@ services:
       timeout: 5s
       retries: 5
 
+  init-token:
+    env_file:
+      - .env
+    image: curlimages/curl:latest
+    container_name: init-token
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    entrypoint: [ "sh", "-c", "/scripts/create_service_token.sh" ]
+    volumes:
+      - ./scripts/create_service_token.sh:/scripts/create_service_token.sh
+      - ./certs/prod/kibana.pem:/certs/kibana.pem
+      - .env:/scripts/.env
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
   kibana:
     env_file:
       - .env
     image: docker.elastic.co/kibana/kibana:8.10.4
     container_name: kibana-prod
+    depends_on:
+      init-token:
+        condition: service_completed_successfully
     environment:
       - ELASTICSEARCH_HOSTS=https://elasticsearch.www.projectkkk.com:9200
-      # username, password 설정 제거하고 토큰 설정 추가
       - ELASTICSEARCH_SERVICEACCOUNTTOKEN=${ELASTICSEARCH_SERVICE_TOKEN}
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/kibana.pem
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=certificate
       - I18N_LOCALE=ko
     volumes:
-      - ./scripts/create_service_token.sh:/docker-entrypoint-initdb.d/create_service_token.sh
       - ./config/kibana/kibana_prod.yml:/usr/share/kibana/config/kibana.yml
       - ./certs/prod/kibana.p12:/usr/share/kibana/config/kibana.p12
       - ./certs/prod/kibana.pem:/usr/share/kibana/config/kibana.pem
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
     networks:
       - app-network
 
@@ -66,10 +80,12 @@ services:
       - ./config/logstash/pipeline/logstash-prod.conf:/usr/share/logstash/pipeline/logstash.conf:rw
       - ./certs/prod/logstash.p12:/usr/share/logstash/config/logstash.p12
     environment:
-     - XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATE_AUTHORITY=/usr/share/logstash/config/logstash.pem
+      - ELASTICSEARCH_SERVICE_TOKEN=${ELASTICSEARCH_SERVICE_TOKEN}
+      - XPACK_MONITORING_ELASTICSEARCH_SERVICE_ACCOUNT_TOKEN=${ELASTICSEARCH_SERVICE_TOKEN}
       - "LS_JAVA_OPTS=-Xms2g -Xmx2g"
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - app-network
 

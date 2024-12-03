@@ -13,7 +13,7 @@ pipeline.batch.delay: 50
 xpack.monitoring.enabled: true
 xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch.www.projectkkk.com:9200"]
 xpack.monitoring.elasticsearch.username: "elastic"
-xpack.monitoring.elasticsearch.password: "elastic"
+xpack.monitoring.elasticsearch.service_token: "${ELASTICSEARCH_SERVICE_TOKEN}"
 
 # HTTP SSL 설정
 http.ssl.keystore.path: "/usr/share/logstash/config/logstash.p12"
